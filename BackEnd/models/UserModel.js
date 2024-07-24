@@ -1,5 +1,5 @@
-import { Schema , model } from 'mongoose';
-const Schema = Schema;
+import mongoose , { Schema , model } from 'mongoose';
+//const Schema = Schema;
 
 const userSchema = new Schema (
     {
@@ -48,4 +48,5 @@ const userSchema = new Schema (
 	}
 );
 
-export default model('User' , userSchema)
+const User =  mongoose.model('User' , userSchema);
+export default User;

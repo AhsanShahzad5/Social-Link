@@ -1,39 +1,46 @@
-//mongodb
- import connectToMongo from './databaseConnection.js' 
- connectToMongo()
 
-//express and cors
+
+//imports
 import express, { json, urlencoded } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 
+//env 
+import dotenv from 'dotenv';
 dotenv.config()
 
+//mongodb connection
+import connectToMongo from './databaseConnection.js' 
+connectToMongo()
 
 const app = express()
-app.use(json())
-app.use(urlencoded({extended : true}))
+
+//necessary middlewares
+app.use(cors());
+app.use(express.json())     //to pass json in request.body
+app.use(urlencoded({extended : true}))   // req.body can parse nested data from forms
+app.use(cookieParser());
 app.set("view engine" , "ejs")
 
 
 //port
 const PORT = process.env.PORT || 5000
 
-//export the router
-
-
-//cors
-app.use(cors());
-
+//export the routers from our routes
+import userRoutes from './routes/userRoutes.js'
 
 //routes
 app.get('/' , (req , res)=>{
     res.send("hello to my page")
 })
 
-//routing
 
-//connect
+
+//routing
+app.use('/api/users' , userRoutes);
+
+
+//connection to server
 app.listen(PORT, () => {
     console.log(`Example app listening on port http://localhost:${PORT}`)
   })

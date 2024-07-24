@@ -13,3 +13,7 @@ async function connectToMongo() {
 
 //export the module to index.js
 export default connectToMongo
+
+
+
+

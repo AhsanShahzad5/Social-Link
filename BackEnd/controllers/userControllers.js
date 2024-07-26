@@ -4,7 +4,23 @@ import generateTokenAndSetCookie from '../utils/helpers/generateTokenAndCookie.j
 
 
 const getUserProfile = async (req,res)=>{
+    
+    const {username} = req.params;
+    
+    try {
+        //exclude password
+		const user = await User.findOne({username}).select("-password").select("-updatedAt");
 
+        // if user doesnt exist
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+		res.status(200).json(user);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+		console.log("Error in getUserProfile: ", err.message);
+	}
 }
 
 

@@ -7,7 +7,7 @@ router.get('/test' , (req,res)=>{
     res.send("signed up successfully")
 })
 
-router.get('/profile/:id' , getUserProfile)
+router.get('/profile/:username' , getUserProfile)
 router.post('/signup' , signUpUser)
 router.post('/login' , loginUser)
 router.post('/logout' , logoutUser)

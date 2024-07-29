@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 import { signUpUser , loginUser , logoutUser ,FollowAndUnfollowUser , updateUser ,  getUserProfile} from "../controllers/userControllers.js";
 import protectRoute from "../middleware/protectRoute.js";
+
 //endpoints
 router.get('/test' , (req,res)=>{
     res.send("signed up successfully")

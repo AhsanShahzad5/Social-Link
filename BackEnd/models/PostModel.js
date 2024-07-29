@@ -1,5 +1,5 @@
 import mongoose , {Schema} from "mongoose";
-const Schema = Schema;
+// const Schema = Schema;
 
 const postSchema = new Schema(
 	{

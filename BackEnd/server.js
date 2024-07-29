@@ -28,6 +28,7 @@ const PORT = process.env.PORT || 5000
 
 //export the routers from our routes
 import userRoutes from './routes/userRoutes.js'
+import postRoutes from './routes/postRoutes.js'
 
 //routes
 app.get('/' , (req , res)=>{
@@ -35,10 +36,9 @@ app.get('/' , (req , res)=>{
 })
 
 
-
 //routing
 app.use('/api/users' , userRoutes);
-
+app.use('/api/posts' , postRoutes );
 
 //connection to server
 app.listen(PORT, () => {

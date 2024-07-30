@@ -15,6 +15,7 @@ import { ColorModeScript } from "@chakra-ui/color-mode";
 import UserPage from './pages/UserPage.jsx'
 import Header from './components/Header.jsx'
 import PostPage from './pages/PostPage.jsx'
+import AuthenticationPage from './pages/AuthenticationPage.jsx'
 
 //chakra methods
 const styles = {
@@ -53,7 +54,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/:username/post/:pid",
-    element: <PostPage/>
+    element: <PostPage />
+  },
+  {
+    path: "/login",
+    element:<AuthenticationPage/>
   }
 ])
 
@@ -62,11 +67,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-     
+
       <Container maxW={'650px'}>
 
-      <Header/>
-      <RouterProvider router={router} />
+        <Header />
+        <RouterProvider router={router} />
       </Container>
     </ChakraProvider>
   </React.StrictMode>,

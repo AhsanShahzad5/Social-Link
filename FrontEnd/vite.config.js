@@ -5,6 +5,15 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server : {
-    port : 3000
+    port : 3000,
+    //removing the cors error
+    //also while doing fetch request we dont need to write all this and written in target , instead we can just write "/api" here
+    proxy : {
+      "/api" : {
+        target : "http://localhost:8000",
+        changeOrigin : true ,
+        secure : false,
+      }
+    }
   }
 })

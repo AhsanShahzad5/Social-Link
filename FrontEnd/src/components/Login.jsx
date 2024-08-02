@@ -15,23 +15,84 @@ import {
     Text,
     useColorModeValue,
     Link,
+    useToast
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
+import authenticationAtom from '../../atoms/authAtom'
+import { useSetRecoilState } from 'recoil'
+import axios from 'axios';
+import useShowToast from '../../hooks/useShowToast'
+import userAtom from '../../atoms/userAtom'
+
+
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false)
+    const setAuthScreen = useSetRecoilState(authenticationAtom);
+    const setUser = useSetRecoilState(userAtom);
+    const showToast = useShowToast()
+
+    const [formData, setFormData] = useState({
+        username: "",
+        password: ""
+    })
+
+    const onChangeFunction = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+
+            // const res = await axios.post('/api/users/signup', formData);
+            const res = await fetch('/api/users/login', {
+                method: "POST",
+                headers: {
+                    'Content-Type': "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await res.json();
+            console.log(data);
+
+            if (data.error) {
+                showToast("Error", data.error, 'error')
+                return;
+            }
+            else {
+                showToast("success", "Logged in successfully"
+                    , 'success');
+
+                setFormData({
+                    username: "",
+                    password: ""
+                })
+            }
+            // storing user data in local stoorage
+            localStorage.setItem('user-threads', JSON.stringify(data));
+            setUser(data);
+            
+        } catch (error) {
+            showToast("Error", error, 'error')
+
+        }
+    }
+
+    const { username, password } = formData;
 
     return (
         <>
             <Flex
                 align={'center'}
                 justify={'center'}
-                >
+            >
                 <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
                     <Stack align={'center'}>
                         <Heading fontSize={'4xl'} textAlign={'center'}>
-                           Login
+                            Login
                         </Heading>
                     </Stack>
                     <Box
@@ -40,21 +101,28 @@ export default function Login() {
                         boxShadow={'lg'}
                         p={8}
                         w={{
-                            base : "full",
-                            sm : "400px"
+                            base: "full",
+                            sm: "400px"
                         }}>
                         <Stack spacing={4}>
                             <HStack>
-                               
+
                             </HStack>
-                            <FormControl  isRequired>
-                                <FormLabel>Email address</FormLabel>
-                                <Input type="text" />
+                            <FormControl isRequired>
+                                <FormLabel>Username</FormLabel>
+                                <Input type="text" name='username'
+                                    onChange={onChangeFunction}
+                                    value={username}
+                                />
                             </FormControl>
                             <FormControl id="password" isRequired>
                                 <FormLabel>Password</FormLabel>
                                 <InputGroup>
-                                    <Input type={showPassword ? 'text' : 'password'} />
+                                    <Input type={showPassword ? 'text' : 'password'}
+                                        name='password'
+                                        onChange={onChangeFunction}
+                                        value={password}
+                                    />
                                     <InputRightElement h={'full'}>
                                         <Button
                                             variant={'ghost'}
@@ -68,17 +136,23 @@ export default function Login() {
                                 <Button
                                     loadingText="Submitting"
                                     size="lg"
-                                    bg={useColorModeValue("gray.600" , "gray.700")}
+                                    bg={useColorModeValue("gray.600", "gray.700")}
                                     color={'white'}
                                     _hover={{
-                                        bg: useColorModeValue("gray.700" , "gray.900")
-                                    }}>
-                                    Sign up
+                                        bg: useColorModeValue("gray.700", "gray.900")
+                                    }}
+
+                                    onClick={handleLogin}
+                                >
+                                    Login
                                 </Button>
                             </Stack>
                             <Stack pt={6}>
                                 <Text align={'center'}>
-                                    Already a user? <Link color={'blue.400'}>Login</Link>
+                                    Not a user? <Link color={'blue.400'}
+                                        onClick={() => { setAuthScreen("signup") }}
+
+                                    >Signup</Link>
                                 </Text>
                             </Stack>
                         </Stack>

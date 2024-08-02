@@ -55,17 +55,14 @@ const signUpUser = async (req, res) => {
                 name: newUser.name,
                 email: newUser.email,
                 username: newUser.username,
-            });
+            })
         } else {
             res.status(400).json({ message: "invalid data" })
         }
 
-        res.status(200).json({
-
-        })
 
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ error : error.message })
         console.log(`Error in signing up user : ${error.message}`);
     }
 
@@ -94,7 +91,7 @@ const loginUser = async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ error : error.message })
         console.log(`Error in logging in user : ${error.message}`);
     }
 }
@@ -105,7 +102,7 @@ const logoutUser = async (req, res) => {
         res.cookie("jwt", " ", { maxAge: 1 /*1 milisecond */ });
         res.status(200).json({ message: "User logged out successfully" });
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ error: error.message })
         console.log(`Error in logout : ${error.message}`);
     }
 }
@@ -164,7 +161,7 @@ const FollowAndUnfollowUser = async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ error : error.message })
         console.log(`Error occured following or un following  : ${error.message}`);
     }
 }
@@ -211,7 +208,7 @@ const updateUser = async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ error : error.message })
         console.log(`Error updating  : ${error.message}`);
     }
 }

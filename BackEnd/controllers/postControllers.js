@@ -2,6 +2,7 @@ import Post from '../models/PostModel.js'
 import User from '../models/UserModel.js'
 import bcryptjs from 'bcryptjs'
 import generateTokenAndSetCookie from '../utils/helpers/generateTokenAndCookie.js';
+import { v2 as cloudinary } from "cloudinary";
 
 
 const test = (req, res) => {
@@ -32,6 +33,12 @@ const createPost = async (req, res) => {
 		if (text.length > maxLength) {
 			return res.status(400).json({ error: `Text must be less than ${maxLength} characters` });
 		}
+		//img
+		if (img) {
+			const uploadedResponse = await cloudinary.uploader.upload(img);
+			img = uploadedResponse.secure_url;
+		}
+
         //create a new post
 		const newPost = new Post({ postedBy, text, img });
 		await newPost.save();

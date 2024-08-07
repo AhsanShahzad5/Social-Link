@@ -1,5 +1,3 @@
-'use client'
-
 import {
     Flex,
     Box,
@@ -15,15 +13,15 @@ import {
     Text,
     useColorModeValue,
     Link,
-    useToast
 } from '@chakra-ui/react'
+
 import { useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
-import authenticationAtom from '../../atoms/authAtom'
+
 import { useSetRecoilState } from 'recoil'
-import axios from 'axios';
-import useShowToast from '../../hooks/useShowToast'
+import authenticationAtom from '../../atoms/authAtom'
 import userAtom from '../../atoms/userAtom'
+import useShowToast from '../../hooks/useShowToast'
 
 
 
@@ -32,7 +30,7 @@ export default function Login() {
     const setAuthScreen = useSetRecoilState(authenticationAtom);
     const setUser = useSetRecoilState(userAtom);
     const showToast = useShowToast()
-
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         username: "",
         password: ""
@@ -43,6 +41,7 @@ export default function Login() {
     };
 
     const handleLogin = async (e) => {
+        setLoading(true);
         e.preventDefault();
         try {
 
@@ -56,8 +55,7 @@ export default function Login() {
             });
 
             const data = await res.json();
-            console.log(data);
-
+        
             if (data.error) {
                 showToast("Error", data.error, 'error')
                 return;
@@ -78,6 +76,8 @@ export default function Login() {
         } catch (error) {
             showToast("Error", error, 'error')
 
+        }finally{
+            setLoading(false)
         }
     }
 
@@ -134,7 +134,7 @@ export default function Login() {
                             </FormControl>
                             <Stack spacing={10} pt={2}>
                                 <Button
-                                    loadingText="Submitting"
+                                    loadingText="Logging-in"
                                     size="lg"
                                     bg={useColorModeValue("gray.600", "gray.700")}
                                     color={'white'}
@@ -143,6 +143,7 @@ export default function Login() {
                                     }}
 
                                     onClick={handleLogin}
+                                    isLoading = {loading}
                                 >
                                     Login
                                 </Button>

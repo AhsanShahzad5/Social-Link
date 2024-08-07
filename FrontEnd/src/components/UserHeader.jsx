@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 //chakra ui imports
-import { Link, Stack, HStack, VStack, Box, Flex, Text, Avatar , useToast } 
-from '@chakra-ui/react'
+import { Link, VStack, Box, Flex, Text, Avatar, useToast, Button }
+    from '@chakra-ui/react'
 import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/menu";
 import { Portal } from "@chakra-ui/portal";
 
@@ -10,23 +10,74 @@ import { Portal } from "@chakra-ui/portal";
 import { CgMoreO } from "react-icons/cg";
 import { BsInstagram } from "react-icons/bs";
 
-const UserHeader = () => {
+import { Link as RouterLink } from "react-router-dom";
+import { useRecoilValue } from 'recoil';
+import userAtom from '../../atoms/userAtom';
+import useShowToast from '../../hooks/useShowToast';
+
+const UserHeader = ({ user }) => {
+
+    const showToast = useShowToast();
+
+    // current user logged in while the user in props is the one whos id we are watching
+    const currentUser = useRecoilValue(userAtom);
+    console.log(currentUser);
+    const [following, setFollowing] = useState(user.followers.includes(currentUser._id));
+    const [updating, setUpdating] = useState(false)
+
+    // console.log(following);
 
     //copy profile and show toast
-    const toast = useToast();
     const copyURL = () => {
-		const currentURL = window.location.href;
-		navigator.clipboard.writeText(currentURL).then(() => {
-			toast({
-				title: "Success.",
-				status: "success",
-				description: "Profile link copied.",
-				duration: 2500,
-				isClosable: true,
-			});
-		});
-	};
-    
+        const currentURL = window.location.href;
+        navigator.clipboard.writeText(currentURL).then(() => {
+            toast({
+                title: "Success.",
+                status: "success",
+                description: "Profile link copied.",
+                duration: 2500,
+                isClosable: true,
+            });
+        });
+    };
+
+    const handleFollowUnfollow = async () => {
+        if (!currentUser) {
+            showToast("Error", "Please login to follow", "error");
+            return;
+        }
+        if(updating) return;
+        setUpdating(true);
+        try {
+            const res = await fetch(`/api/users/follow/${user._id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const data = await res.json();
+            if (data.error) {
+                showToast("Error", data.error, "error");
+                return;
+            }
+
+            if (following) {
+                showToast("Success", `Unfollowed ${user.name}`, "success");
+                user.followers.pop(); // simulate removing from followers
+            } else {
+                showToast("Success", `Followed ${user.name}`, "success");
+                user.followers.push(currentUser?._id); // simulate adding to followers
+            }
+            setFollowing(!following);
+
+            console.log(data);
+        } catch (error) {
+            showToast("Error", error, "error");
+        } finally {
+            setUpdating(false);
+        }
+    };
+
     return (
         <>
             <VStack
@@ -36,27 +87,49 @@ const UserHeader = () => {
 
                     <Box>
                         <Text fontSize={"2xl"} fontWeight={"bold"}>
-                            {"Ahsan"}
+                            {user.name}
                         </Text>
                         <Flex gap={2} alignItems={"center"}>
-                            <Text fontSize={"sm"}>{"Ahsan Shahzad"}</Text>
+                            <Text fontSize={"sm"}>{user.username}</Text>
                             <Text fontSize={"xs"} bg={"gray.dark"} color={"gray.light"} p={1} borderRadius={"full"}>
                                 Threads.net
                             </Text>
                         </Flex>
                     </Box>
                     <Box>
-                        <Avatar name='Ahsan' size={{
-                            base : "md",
-                            md : "xl"
-                        }} src='/ahsan.jpg' />
+                        {user.profilePic && <Avatar
+                            name={user.name}
+                            size={{
+                                base: "md",
+                                md: "xl"
+                            }} src={user.profilePic} />}
+
+                        {!user.profilePic && <Avatar
+                            name={user.name}
+                            size={{
+                                base: "md",
+                                md: "xl"
+                            }} src='' />}
                     </Box>
                 </Flex>
-                <Text>Ceo of this app </Text>
+                <Text>{user.bio} </Text>
+                {currentUser?._id === user._id && (
 
+                    <Link as={RouterLink} to='/update'>
+                        <Button size={"sm"}>Update Profile</Button>
+                    </Link>
+                )}
+                {currentUser?._id !== user._id && (
+                    <Button size={"sm"}
+                        onClick={handleFollowUnfollow}
+                        isLoading={updating}
+                    >
+                        {following ? "Unfollow" : "Follow"}
+                    </Button>
+                )}
                 <Flex w={"full"} justifyContent={"space-between"}>
                     <Flex gap={2} alignItems={"center"}>
-                        <Text color={"gray.light"}>5k followers</Text>
+                        <Text color={"gray.light"}>{user.followers.length} followers</Text>
                         <Box w='1' h='1' bg={"gray.light"} borderRadius={"full"}></Box>
                         <Link color={"gray.light"}>instagram.com</Link>
                     </Flex>
@@ -65,38 +138,38 @@ const UserHeader = () => {
                             <BsInstagram size={24} cursor={"pointer"} />
                         </Box>
                         <Box className='icon-container'>
-						<Menu>
-                    
-							<MenuButton>
-								<CgMoreO size={24} cursor={"pointer"} />
-							</MenuButton>
-							<Portal>
-								<MenuList bg={"gray.dark"}>
-									<MenuItem bg={"gray.dark"} onClick={copyURL}>
-										Copy link
-									</MenuItem>
-								</MenuList>
-							</Portal>
-						</Menu>
-					</Box>
+                            <Menu>
+
+                                <MenuButton>
+                                    <CgMoreO size={24} cursor={"pointer"} />
+                                </MenuButton>
+                                <Portal>
+                                    <MenuList bg={"gray.dark"}>
+                                        <MenuItem bg={"gray.dark"} onClick={copyURL}>
+                                            Copy link
+                                        </MenuItem>
+                                    </MenuList>
+                                </Portal>
+                            </Menu>
+                        </Box>
                     </Flex>
                 </Flex>
 
                 <Flex w={"full"}>
-				<Flex flex={1} borderBottom={"1.5px solid white"} justifyContent={"center"} pb='3' cursor={"pointer"}>
-					<Text fontWeight={"bold"}> Threads</Text>
-				</Flex>
-				<Flex
-					flex={1}
-					borderBottom={"1px solid gray"}
-					justifyContent={"center"}
-					color={"gray.light"}
-					pb='3'
-					cursor={"pointer"}
-				>
-					<Text fontWeight={"bold"}> Replies</Text>
-				</Flex>
-			</Flex>
+                    <Flex flex={1} borderBottom={"1.5px solid white"} justifyContent={"center"} pb='3' cursor={"pointer"}>
+                        <Text fontWeight={"bold"}> Threads</Text>
+                    </Flex>
+                    <Flex
+                        flex={1}
+                        borderBottom={"1px solid gray"}
+                        justifyContent={"center"}
+                        color={"gray.light"}
+                        pb='3'
+                        cursor={"pointer"}
+                    >
+                        <Text fontWeight={"bold"}> Replies</Text>
+                    </Flex>
+                </Flex>
 
             </VStack >
         </>

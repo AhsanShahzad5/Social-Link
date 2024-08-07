@@ -22,7 +22,7 @@ const UserHeader = ({ user }) => {
     // current user logged in while the user in props is the one whos id we are watching
     const currentUser = useRecoilValue(userAtom);
     console.log(currentUser);
-    const [following, setFollowing] = useState(user.followers.includes(currentUser._id));
+    const [following, setFollowing] = useState(user.followers.includes(currentUser?._id));
     const [updating, setUpdating] = useState(false)
 
     // console.log(following);
@@ -171,7 +171,7 @@ const UserHeader = ({ user }) => {
                     </Flex>
                 </Flex>
 
-            </VStack >
+            </VStack>
         </>
     )
 }

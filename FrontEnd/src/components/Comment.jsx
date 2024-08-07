@@ -20,7 +20,7 @@ const Comment = ({ username, comment, likes, createdAt }) => {
                         </Flex>
                     </Flex>
                     <Text>{comment}</Text>
-                    <Actions liked={liked} setLiked={setLiked} />
+                    {/* <Actions post={post} /> */}
                     <Text fontSize={"sm"} color={"gray.light"} >
                         {likes + (liked ? 1 : 0)}
                     </Text>

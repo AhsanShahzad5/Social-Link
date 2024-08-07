@@ -40,7 +40,7 @@ const PostPage = () => {
 
 
       <Flex gap={3} my={3}>
-        <Actions liked={liked} setLiked={setLiked} />
+        {/* <Actions liked={liked} setLiked={setLiked} /> */}
       </Flex>
       <Flex gap={2} alignItems={"center"}>
         <Text color={"gray.light"} fontSize='sm'>

@@ -6,6 +6,7 @@ import UserPage from './pages/UserPage.jsx'
 import Header from './components/Header.jsx'
 import UpdateProfile from './pages/UpdateProfile.jsx'
 import PostPage from './pages/PostPage.jsx'
+import ChatPage from './pages/ChatPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import AuthenticationPage from './pages/AuthenticationPage.jsx'
 import { useRecoilValue } from 'recoil'
@@ -51,6 +52,10 @@ function App() {
           path: "/update",
           element: user ? <UpdateProfile /> : <Navigate to="/auth" />,
         },
+        {
+          path: "/chat",
+          element :user ? <ChatPage/> : <Navigate to= "/auth" />
+        }
       ],
     },
   ]);

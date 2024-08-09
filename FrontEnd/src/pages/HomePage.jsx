@@ -65,7 +65,7 @@ const HomePage = () => {
         >
         </Box>
       {/* </Flex> */}
-      {user && <LogoutButton />}
+      {/* {user && <LogoutButton />} */}
 
     </>);
 };

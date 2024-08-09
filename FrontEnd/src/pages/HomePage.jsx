@@ -10,7 +10,7 @@ import postsAtom from "../../atoms/postsAtom";
 import userAtom from "../../atoms/userAtom";
 
 const HomePage = () => {
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useRecoilState(postsAtom);
   const [loading, setLoading] = useState(true);
   const user = useRecoilValue(userAtom)
   const showToast = useShowToast();

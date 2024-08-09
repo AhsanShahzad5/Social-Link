@@ -229,6 +229,17 @@ const updateUser = async (req, res) => {
         // update our user
         user = await user.save();
 
+        //if i commented on smthing , changed my username or pic , then my updates will alos apply on previous commented posts
+        await Post.updateMany(
+            {"replies.userId":userId} ,
+            {$set:{
+                "replies.$[reply].username" : user.username,
+                "replies.$[reply].userProfilePic" : user.profilePic
+            }},
+            {
+                arrayFilters : [{"reply.userId":userId}]
+            }
+        )
         // password should be null in response
         user.password = null;
 

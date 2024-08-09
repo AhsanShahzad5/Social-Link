@@ -11,17 +11,18 @@ import AuthenticationPage from './pages/AuthenticationPage.jsx'
 import { useRecoilValue } from 'recoil'
 import userAtom from '../atoms/userAtom'
 import Layout from './pages/Layout'
+import CreatePost from './components/CreatePost'
 
 
 function App() {
   const [count, setCount] = useState(0)
   const user = useRecoilValue(userAtom);
-  
+
   //router
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Layout />, 
+      element: <Layout />,
       children: [
         {
           path: "/",
@@ -29,7 +30,14 @@ function App() {
         },
         {
           path: "/:username",
-          element: <UserPage />,
+          element:  
+            user ? <>
+              <UserPage />
+              <CreatePost />
+            </> :
+              <UserPage />
+
+          
         },
         {
           path: "/:username/post/:pid",
@@ -49,7 +57,7 @@ function App() {
 
   return (
     <>
-        <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </>
   )
 }

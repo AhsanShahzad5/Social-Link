@@ -44,7 +44,7 @@ const Actions = ({ post }) => {
 				},
 			});
 			const data = await res.json();
-			console.log(data);
+			// console.log(data);
 			if (data.error) {
 				return showToast("Error", data.error, "error");
 			}
@@ -94,7 +94,7 @@ const Actions = ({ post }) => {
 				body: JSON.stringify({ text: reply })
 			});
 			const data = await res.json();
-			console.log(data);
+			// console.log(data);
 			if (data.error) {
 				return showToast("Error", data.error, "error");
 			}

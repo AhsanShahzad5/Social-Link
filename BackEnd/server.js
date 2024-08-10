@@ -5,6 +5,7 @@ import {v2 as cloudinary} from 'cloudinary'
 //export the routers from our routes
 import userRoutes from './routes/userRoutes.js'
 import postRoutes from './routes/postRoutes.js'
+import messageRoutes from './routes/messageRoutes.js'
 
 //env 
 import dotenv from 'dotenv';
@@ -42,6 +43,8 @@ app.get('/' , (req , res)=>{
 //routing
 app.use('/api/users' , userRoutes);
 app.use('/api/posts' , postRoutes );
+app.use('/api/messages' , messageRoutes );
+
 
 //connection to server
 app.listen(PORT, () => {

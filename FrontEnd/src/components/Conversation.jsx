@@ -41,7 +41,8 @@ const Conversation = ({ conversation }) => {
                     _id: conversation._id,
                     userId: user._id,
                     username: user.username,
-                    userProfilePic: user.profilePic
+                    userProfilePic: user.profilePic ,
+                    mock : conversation.mock
                 })
             }}
             bg={

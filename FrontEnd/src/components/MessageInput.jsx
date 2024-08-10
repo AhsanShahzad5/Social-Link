@@ -6,18 +6,74 @@ import { IoSendSharp } from "react-icons/io5";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { BsFillImageFill } from "react-icons/bs";
 import usePreviewImg from "../../hooks/usePreviewImage";
+import useShowToast from "../../hooks/useShowToast";
+import { conversationAtom, selectedConversationAtom } from "../../atoms/messagesAtom";
 
-const MessageInput = () => {
- 
- const handleSendMessage = ()=>{
-  console.log('hi');
- }
+
+const MessageInput = ({setMessages}) => {
+	const [messageText, setMessageText] = useState("");
+	const showToast = useShowToast();
+	const selectedConversation = useRecoilValue(selectedConversationAtom);
+	const setConversations = useSetRecoilState(conversationAtom);
+	const imageRef = useRef(null);
+	const { onClose } = useDisclosure();
+	const { handleImageChange, imgUrl, setImgUrl } = usePreviewImg();
+	const [isSending, setIsSending] = useState(false);
+
+	const handleSendMessage = async (e) => {
+		e.preventDefault();
+		if (!messageText && !imgUrl) return;
+		if (isSending) return;
+
+		setIsSending(true);
+
+		try {
+			const res = await fetch("/api/messages", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					message: messageText,
+					recipientId: selectedConversation.userId,
+					img: imgUrl,
+				}),
+			});
+			const data = await res.json();
+			if (data.error) {
+				showToast("Error", data.error, "error");
+				return;
+			}
+			console.log(data);
+			//append this on end of exisiting msgs
+			setMessages((messages) => [...messages, data]);
+
+			// update the state of the latest msg that we see in thr left 
+			setConversations((prevConvs) => {
+				const updatedConversations = prevConvs.map((conversation) => {
+					if (conversation._id === selectedConversation._id) {
+						return {
+							...conversation,
+							lastMessage: {
+								text: messageText,
+								sender: data.sender,
+							},
+						};
+					}
+					return conversation;
+				});
+				return updatedConversations;
+			});
+			setMessageText("");
+			setImgUrl("");
+		} catch (error) {
+			showToast("Error", error.message, "error");
+		} finally {
+			setIsSending(false);
+		}
+	};
  
 
- const [messageText, setMessageText] = useState('')
- const [isSending, setIsSending] = useState(false);
- const imageRef = useRef(null);
- const { handleImageChange, imgUrl, setImgUrl } = usePreviewImg();
   return (
     <Flex gap={2} alignItems={"center"}>
 			<form onSubmit={handleSendMessage} style={{ flex: 95 }}>
@@ -29,7 +85,7 @@ const MessageInput = () => {
 						value={messageText}
 					/>
 					<InputRightElement onClick={handleSendMessage} cursor={"pointer"}>
-						<IoSendSharp />
+						<IoSendSharp/>
 					</InputRightElement>
 				</InputGroup>
 			</form>
@@ -54,9 +110,7 @@ const MessageInput = () => {
 						</Flex>
 						<Flex justifyContent={"flex-end"} my={2}>
 							{!isSending ? (
-								<IoSendSharp size={24} cursor={"pointer"} onClick={handleSendMessage} 
-
-                />
+								<IoSendSharp size={24} cursor={"pointer"} onClick={handleSendMessage} />
 							) : (
 								<Spinner size={"md"} />
 							)}

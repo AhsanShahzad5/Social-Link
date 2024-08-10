@@ -6,19 +6,20 @@ import { useEffect, useState } from "react";
 import Conversation from '../components/Conversation';
 import MessageContainer from '../components/MessageContainer';
 import useShowToast from '../../hooks/useShowToast';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { conversationAtom, selectedConversationAtom } from '../../atoms/messagesAtom';
+import userAtom from '../../atoms/userAtom';
 
 
 const ChatPage = () => {
   const [loadingConversations, setLoadingConversations] = useState(true);
+  const [searchingUser, setSearchingUser] = useState(false);
   const [conversations, setConversations] = useRecoilState(conversationAtom);
+  const currentUser = useRecoilValue(userAtom)
   const [selectedConversation, setSelectedConversation] = useRecoilState(selectedConversationAtom);
-
+  const [searchText, setSearchText] = useState('')
   const showToast = useShowToast();
-  const handleConversationSearch = () => {
-    console.log("hi");
-  }
+
 
   useEffect(() => {
     const getConversations = async () => {
@@ -29,7 +30,7 @@ const ChatPage = () => {
           showToast("Error", data.error, "error");
           return;
         }
-//        console.log(data);
+        //        console.log(data);
         setConversations(data);
       } catch (error) {
         showToast("Error", error.message, "error");
@@ -39,6 +40,69 @@ const ChatPage = () => {
     }
     getConversations();
   }, [showToast, setConversations])
+
+
+  const handleConversationSearch = async (e) => {
+    try {
+      setSearchingUser(true);
+      //we wanna get username of user , from there we can fetch the user msg
+      const res = await fetch(`/api/users/profile/${searchText}`);
+      const searchedUser = await res.json();
+      if (searchedUser.error) {
+        showToast("Error", searchedUser.error, "error");
+        return;
+      }
+      //now we wanna make sure we dont msg ourseleves
+      const messagingYourself = searchedUser._id === currentUser._id;
+      if (messagingYourself) {
+        showToast("Error", "You cannot message yourself", "error");
+        return;
+      }
+
+      //if we have alr made conversations with that user
+      const conversationAlreadyExists = conversations.find(
+				(conversation) => conversation.participants[0]._id === searchedUser._id
+			);
+
+			if (conversationAlreadyExists) {
+				setSelectedConversation({
+					_id: conversationAlreadyExists._id,
+					userId: searchedUser._id,
+					username: searchedUser.username,
+					userProfilePic: searchedUser.profilePic,
+				});
+				return;
+			}
+
+      // searching for a user who doesnot aleady exist
+      const mockConversation = {
+				mock: true,
+				lastMessage: {
+					text: "",
+					sender: "",
+				},
+				_id: Date.now(),
+				participants: [
+					{
+						_id: searchedUser._id,
+						username: searchedUser.username,
+						profilePic: searchedUser.profilePic,
+					},
+				],
+			};
+      
+			setConversations((prevConvs) => [...prevConvs, mockConversation]);
+
+    } catch (error) {
+      showToast("Error", error.message, "error");
+
+    } finally {
+      setSearchingUser(false);
+
+    }
+  }
+
+
   return (
     <Box
       position={"absolute"}
@@ -65,12 +129,11 @@ const ChatPage = () => {
           <form onSubmit={handleConversationSearch}>
             <Flex alignItems={"center"} gap={2}>
               <Input placeholder='Search for a user'
-              // onChange={(e) => setSearchText(e.target.value)} 
+                onChange={(e) => setSearchText(e.target.value)}
 
               />
               <Button size={"sm"} onClick={handleConversationSearch}
-
-              // isLoading={searchingUser}
+                isLoading={searchingUser}
 
               >
                 <SearchIcon />

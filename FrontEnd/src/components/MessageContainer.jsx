@@ -23,7 +23,7 @@ const MessageContainer = () => {
 			setLoadingMessages(true);
 			setMessages([]);
 			try {
-				// if (selectedConversation.mock) return;
+				if (selectedConversation.mock) return;
 
 				//selected conv has other user id
 				const res = await fetch(`/api/messages/${selectedConversation.userId}`);
@@ -92,7 +92,7 @@ const MessageContainer = () => {
                  
 			</Flex>
 
-			<MessageInput /*setMessages={setMessages}*/ />
+			<MessageInput setMessages={setMessages} />
         </Flex>
   )
 }

@@ -21,7 +21,11 @@ const MessageContainer = () => {
 
 	useEffect(() => {
 		socket.on("newMessage", (message) => {
-			setMessages((prevMessages) => [...prevMessages, message])
+			//ensure that our msg is sent thru our id only
+			if (selectedConversation._id === message.conversationId) {
+				setMessages((prev) => [...prev, message]);
+			}
+
 			//updating the latest msg that appears on left
 			setConversations((prev) => {
 				const updatedConversations = prev.map((conversation) => {
@@ -69,6 +73,11 @@ const MessageContainer = () => {
 		getMessages();
 	}, [showToast, selectedConversation.userId]);
 
+	//scroll when a new msg is sent
+	useEffect(() => {
+		messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, [messages]);
+
 	return (
 		<Flex
 			flex='70'
@@ -110,7 +119,7 @@ const MessageContainer = () => {
 				{!loadingMessages &&
 					messages.map((message) => (
 						<Flex key={message._id} direction={"column"}
-						// ref={messages.length - 1 === messages.indexOf(message) ? messageEndRef : null} 
+						 ref={messages.length - 1 === messages.indexOf(message) ? messageEndRef : null} 
 						>
 							<Message message={message} ownMessage={currentUser._id === message.sender} />
 						</Flex>

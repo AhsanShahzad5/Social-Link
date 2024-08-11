@@ -22,10 +22,26 @@ const MessageContainer = () => {
 	useEffect(() => {
 		socket.on("newMessage", (message) => {
 			setMessages((prevMessages) => [...prevMessages, message])
-		})
+			//updating the latest msg that appears on left
+			setConversations((prev) => {
+				const updatedConversations = prev.map((conversation) => {
+					if (conversation._id === message.conversationId) {
+						return {
+							...conversation,
+							lastMessage: {
+								text: message.text,
+								sender: message.sender,
+							},
+						};
+					}
+					return conversation;
+				});
+				return updatedConversations;
+			})
+		});
 		//when it unmounts we no longer listen to the socket connection
-		return ()=> socket.off("newMessage");
-	}, [])
+		return () => socket.off("newMessage");
+	}, [socket, selectedConversation, setConversations])
 
 	// use effects
 	useEffect(() => {

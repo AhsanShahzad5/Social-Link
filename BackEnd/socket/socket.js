@@ -1,6 +1,12 @@
 import { Server } from "socket.io";
 import http from 'http';
 import express from "express";
+
+//models
+import Message from "../models/MessageModel.js";
+import Conversation from "../models/ConversationModel.js";
+
+
 const app = express();
 
 //http server
@@ -8,39 +14,40 @@ const server = http.createServer(app);
 
 // binindg our socket server with our http server
 //to avoid cors errros
-const io = new Server(server , {
-    cors: {
+const io = new Server(server, {
+	cors: {
 		origin: "http://localhost:3000",
 		methods: ["GET", "POST"],
 	},
 });
 
+//recepient socketId
+export const getRecipientSocketId = (recipientId) => {
+	return userSocketMap[recipientId];
+}
+
+
 // to store user id for sockets , we create a hash map
 const userSocketMap = {} // userId map to socketId
-
-//recepient socketId
-export const getRecipientSocketId = (recipientId)=>{
-return userSocketMap(recipientId);
-}
 
 
 //estalish conneciotn with users
 
-io.on('connection' , (socket)=>{
-    console.log('user connected ' , socket.id);
+io.on('connection', (socket) => {
+	console.log('user connected ', socket.id);
 
 	const userId = socket.handshake.query.userId; // userId map to socketId
-	if(userId != "undefined"){
+	if (userId != "undefined") {
 		userSocketMap[userId] = socket.id;
 	}
-	io.emit("getOnlineUsers" , Object.keys(userSocketMap));
-	
-	socket.on("disconnect" , ()=>{
+	io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+	socket.on("disconnect", () => {
 		console.log("user disconnected");
 		delete userSocketMap[userId];
 		//update the state
-		io.emit("getOnlineUsers" , Object.keys(userSocketMap));
+		io.emit("getOnlineUsers", Object.keys(userSocketMap));
 	})
 })
 
-export {io , server , app}
+export { io, server, app }

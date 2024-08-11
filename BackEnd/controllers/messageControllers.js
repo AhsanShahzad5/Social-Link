@@ -2,7 +2,7 @@ import Conversation from '../models/ConversationModel.js';
 import Message from '../models/MessageModel.js';
 import { v2 as cloudinary } from 'cloudinary'
 import mongoose from 'mongoose';
-import { getRecipientSocketId } from '../socket/socket.js';
+import { getRecipientSocketId , io } from '../socket/socket.js';
 
 const sendMessage = async (req, res) => {
     try {

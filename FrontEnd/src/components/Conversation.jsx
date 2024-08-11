@@ -16,7 +16,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import { selectedConversationAtom } from '../../atoms/messagesAtom';
 
-const Conversation = ({ conversation }) => {
+const Conversation = ({ conversation,isOnline }) => {
     const currentUser = useRecoilValue(userAtom);
     const [selectedConversation, setSelectedConversation] = useRecoilState(selectedConversationAtom)
     const user = conversation.participants[0];
@@ -59,7 +59,7 @@ const Conversation = ({ conversation }) => {
                     }}
                     src={user.profilePic}
                 >
-                    {true ? <AvatarBadge boxSize='1em' bg='green.500' /> : ""}
+                    {isOnline ? <AvatarBadge boxSize='1em' bg='green.500' /> : ""}
                 </Avatar>
             </WrapItem>
             <Stack direction={"column"} fontSize={"sm"}>

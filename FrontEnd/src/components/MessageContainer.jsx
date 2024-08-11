@@ -7,6 +7,7 @@ import useShowToast from '../../hooks/useShowToast';
 import { conversationAtom, selectedConversationAtom } from "../../atoms/messagesAtom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import userAtom from "../../atoms/userAtom";
+import { useSocket } from '../../context/SocketContext';
 const MessageContainer = () => {
 
 	const showToast = useShowToast();
@@ -16,6 +17,15 @@ const MessageContainer = () => {
 	const [messages, setMessages] = useState([]);
 	const setConversations = useSetRecoilState(conversationAtom);
 	const messageEndRef = useRef(null);
+	const { socket } = useSocket();
+
+	useEffect(() => {
+		socket.on("newMessage", (message) => {
+			setMessages((prevMessages) => [...prevMessages, message])
+		})
+		//when it unmounts we no longer listen to the socket connection
+		return ()=> socket.off("newMessage");
+	}, [])
 
 	// use effects
 	useEffect(() => {
@@ -44,14 +54,14 @@ const MessageContainer = () => {
 	}, [showToast, selectedConversation.userId]);
 
 	return (
-    <Flex
+		<Flex
 			flex='70'
 			bg={useColorModeValue("gray.200", "gray.dark")}
 			borderRadius={"md"}
 			p={2}
 			flexDirection={"column"}
 		>
-        {/* Message header */}
+			{/* Message header */}
 			<Flex w={"full"} h={12} alignItems={"center"} gap={2}>
 				<Avatar src={selectedConversation.userProfilePic} size={"sm"} />
 				<Text display={"flex"} alignItems={"center"}>
@@ -60,7 +70,7 @@ const MessageContainer = () => {
 			</Flex>
 
 			<Divider />
-            <Flex flexDir={"column"} gap={4} my={4} p={2} height={"400px"} overflowY={"auto"}>
+			<Flex flexDir={"column"} gap={4} my={4} p={2} height={"400px"} overflowY={"auto"}>
 				{loadingMessages &&
 					[...Array(5)].map((_, i) => (
 						<Flex
@@ -85,16 +95,16 @@ const MessageContainer = () => {
 					messages.map((message) => (
 						<Flex key={message._id} direction={"column"}
 						// ref={messages.length - 1 === messages.indexOf(message) ? messageEndRef : null} 
-						> 
+						>
 							<Message message={message} ownMessage={currentUser._id === message.sender} />
 						</Flex>
 					))}
-                 
+
 			</Flex>
 
 			<MessageInput setMessages={setMessages} />
-        </Flex>
-  )
+		</Flex>
+	)
 }
 
 export default MessageContainer

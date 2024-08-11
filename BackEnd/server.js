@@ -7,6 +7,8 @@ import userRoutes from './routes/userRoutes.js'
 import postRoutes from './routes/postRoutes.js'
 import messageRoutes from './routes/messageRoutes.js'
 
+// import app and server from socket
+import {app,server} from './socket/socket.js'
 //env 
 import dotenv from 'dotenv';
 dotenv.config()
@@ -23,7 +25,7 @@ api_secret : process.env.CLOUDINARY_API_SECRET
 });
 
 
-const app = express()
+//const app = express()
 
 //necessary middlewares
 app.use(express.json({limit : "50mb"}))     //to pass json in request.body
@@ -47,6 +49,7 @@ app.use('/api/messages' , messageRoutes );
 
 
 //connection to server
-app.listen(PORT, () => {
+//using server isntead of app , we can now use both http and socket server functionalities 
+server.listen(PORT, () => {
     console.log(`Example app listening on port http://localhost:${PORT}`)
   })

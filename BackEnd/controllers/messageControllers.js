@@ -2,6 +2,7 @@ import Conversation from '../models/ConversationModel.js';
 import Message from '../models/MessageModel.js';
 import { v2 as cloudinary } from 'cloudinary'
 import mongoose from 'mongoose';
+import { getRecipientSocketId } from '../socket/socket.js';
 
 const sendMessage = async (req, res) => {
     try {
@@ -43,7 +44,10 @@ const sendMessage = async (req, res) => {
                 }
             })
         ])
-
+        const recipientSocketId =  getRecipientSocketId(recipientId);
+        if(recipientSocketId){
+            io.to(recipientSocketId).emit("newMessage" , newMessage)
+        }
         res.status(201).json(newMessage)
     } catch (error) {
         res.status(500).json({ error: error.message })

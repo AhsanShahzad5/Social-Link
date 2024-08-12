@@ -9,7 +9,7 @@ const AuthenticationPage = () => {
     // const [first, setfirst] = useState(second)
 
   const authScreenState = useRecoilValue(authenticationAtom);
-  console.log(authScreenState);
+  // console.log(authScreenState);
 //   useSetRecoilState(authenticationAtom)
   return (
     <>

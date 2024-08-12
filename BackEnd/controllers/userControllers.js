@@ -258,11 +258,13 @@ const updateUser = async (req, res) => {
 
 const getSuggestedUsers = async (req, res) => {
 	try {
-		// exclude the current user from suggested users array and exclude users that current user is already following
 		const userId = req.user._id;
 
+        // all users followed by us
 		const usersFollowedByYou = await User.findById(userId).select("following");
 
+        // get userIds not includes our id
+        // and gives 10 random users from our database 
 		const users = await User.aggregate([
 			{
 				$match: {
@@ -273,9 +275,12 @@ const getSuggestedUsers = async (req, res) => {
 				$sample: { size: 10 },
 			},
 		]);
+        //remove users we already following
 		const filteredUsers = users.filter((user) => !usersFollowedByYou.following.includes(user._id));
+        
+        // take 4 users form that 10 random users
 		const suggestedUsers = filteredUsers.slice(0, 4);
-
+        //dont fetch the passwords
 		suggestedUsers.forEach((user) => (user.password = null));
 
 		res.status(200).json(suggestedUsers);

@@ -13,19 +13,13 @@ import { BsInstagram } from "react-icons/bs";
 import { Link as RouterLink } from "react-router-dom";
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
-import useShowToast from '../../hooks/useShowToast';
+import useFollowUnfollow from '../../hooks/useFollowUnfollow';
 
 const UserHeader = ({ user }) => {
 
-    const showToast = useShowToast();
-
+const {handleFollowUnfollow , following , updating} = useFollowUnfollow(user);
     // current user logged in while the user in props is the one whos id we are watching
     const currentUser = useRecoilValue(userAtom);
-    // console.log(currentUser);
-    const [following, setFollowing] = useState(user.followers.includes(currentUser?._id));
-    const [updating, setUpdating] = useState(false)
-
-    // console.log(following);
 
     //copy profile and show toast
     const copyURL = () => {
@@ -41,42 +35,6 @@ const UserHeader = ({ user }) => {
         });
     };
 
-    const handleFollowUnfollow = async () => {
-        if (!currentUser) {
-            showToast("Error", "Please login to follow", "error");
-            return;
-        }
-        if(updating) return;
-        setUpdating(true);
-        try {
-            const res = await fetch(`/api/users/follow/${user._id}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            const data = await res.json();
-            if (data.error) {
-                showToast("Error", data.error, "error");
-                return;
-            }
-
-            if (following) {
-                showToast("Success", `Unfollowed ${user.name}`, "success");
-                user.followers.pop(); // simulate removing from followers
-            } else {
-                showToast("Success", `Followed ${user.name}`, "success");
-                user.followers.push(currentUser?._id); // simulate adding to followers
-            }
-            setFollowing(!following);
-
-            console.log(data);
-        } catch (error) {
-            showToast("Error", error, "error");
-        } finally {
-            setUpdating(false);
-        }
-    };
 
     return (
         <>

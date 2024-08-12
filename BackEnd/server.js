@@ -1,5 +1,6 @@
 //imports
 import express, { json, urlencoded } from 'express';
+import path from 'path';
 import cookieParser from 'cookie-parser';
 import {v2 as cloudinary} from 'cloudinary'
 //export the routers from our routes
@@ -11,11 +12,18 @@ import messageRoutes from './routes/messageRoutes.js'
 import {app,server} from './socket/socket.js'
 //env 
 import dotenv from 'dotenv';
-dotenv.config()
+
 
 //mongodb connection
 import connectToMongo from './databaseConnection.js' 
 connectToMongo()
+
+
+dotenv.config()
+//port
+const PORT = process.env.PORT || 5000
+
+const __dirname = path.resolve()
 
 //cloudinary config
 cloudinary.config({
@@ -32,14 +40,10 @@ app.use(express.json({limit : "50mb"}))     //to pass json in request.body
 app.use(urlencoded({extended : true}))   // req.body can parse nested data from forms
 app.use(cookieParser());
 
-//port
-const PORT = process.env.PORT || 5000
-
-
 //routes
-app.get('/' , (req , res)=>{
-    res.send("hello to my page")
-})
+// app.get('/' , (req , res)=>{
+//     res.send("hello to my page")
+// })
 
 
 //routing
@@ -47,6 +51,20 @@ app.use('/api/users' , userRoutes);
 app.use('/api/posts' , postRoutes );
 app.use('/api/messages' , messageRoutes );
 
+//8000 -> be
+//3000->fe
+
+// we need both frontend and backend on 8000
+
+//this is to render frontend to static assets
+if (process.env.NODE_ENV === "production") {
+	app.use(express.static(path.join(__dirname, "/FrontEnd/dist")));
+
+	// react app
+	app.get("*", (req, res) => {
+		res.sendFile(path.resolve(__dirname, "FrontEnd", "dist", "index.html"));
+	});
+}
 
 //connection to server
 //using server isntead of app , we can now use both http and socket server functionalities 

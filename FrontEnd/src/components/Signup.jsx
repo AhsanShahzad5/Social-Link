@@ -137,7 +137,7 @@ export default function Signup() {
 
                                 />
                             </FormControl>
-                            <FormControl id="password" isRequired>
+                            <FormControl isRequired>
                                 <FormLabel>Password</FormLabel>
                                 <InputGroup>
                                     <Input type={showPassword ? 'text' : 'password'}

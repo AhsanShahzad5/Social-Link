@@ -115,7 +115,7 @@ export default function Login() {
                                     value={username}
                                 />
                             </FormControl>
-                            <FormControl id="password" isRequired>
+                            <FormControl  isRequired>
                                 <FormLabel>Password</FormLabel>
                                 <InputGroup>
                                     <Input type={showPassword ? 'text' : 'password'}

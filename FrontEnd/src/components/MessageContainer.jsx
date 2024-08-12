@@ -144,7 +144,6 @@ const MessageContainer = () => {
 							{i % 2 !== 0 && <SkeletonCircle size={7} />}
 						</Flex>
 					))}
- {console.log(messages)}
 				{!loadingMessages &&
 					messages.map((message) => (
 						<Flex key={message._id} direction={"column"}

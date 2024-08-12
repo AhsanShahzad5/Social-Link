@@ -27,7 +27,7 @@ export const SocketContextProvider = ({ children }) => {
         return () => socket && socket.close();
     }, [user?._id])
     
-    console.log(onlineUsers);
+    // console.log(onlineUsers);
     return (
         <SocketContext.Provider value={{ socket , onlineUsers }} >
             {children}

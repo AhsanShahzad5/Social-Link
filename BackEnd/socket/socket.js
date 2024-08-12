@@ -34,7 +34,7 @@ const userSocketMap = {} // userId map to socketId
 //estalish conneciotn with users
 
 io.on('connection', (socket) => {
-	console.log('user connected ', socket.id);
+	// console.log('user connected ', socket.id);
 
 	const userId = socket.handshake.query.userId; // userId map to socketId
 	if (userId != "undefined") {
@@ -58,7 +58,7 @@ io.on('connection', (socket) => {
 
 
 	socket.on("disconnect", () => {
-		console.log("user disconnected");
+		// console.log("user disconnected");
 		delete userSocketMap[userId];
 		//update the state
 		io.emit("getOnlineUsers", Object.keys(userSocketMap));

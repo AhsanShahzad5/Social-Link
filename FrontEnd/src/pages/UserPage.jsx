@@ -20,6 +20,9 @@ const UserPage = () => {
   useEffect(() => {
 
     const getPosts = async () => {
+      if(!user){
+        return;
+      }
       setFetchingPosts();
       try {
         const res = await fetch(`/api/posts/user/${username}`);
@@ -34,7 +37,7 @@ const UserPage = () => {
       }
     }
     getPosts();
-  }, [username, showToast, setPosts])
+  }, [username, showToast, setPosts , user])
   if (!user && loading) {
     return (
       <Flex justifyContent={'center'}>
@@ -50,7 +53,7 @@ const UserPage = () => {
 
       <UserHeader user={user} />
 
-      {!fetchingPosts && posts.length === 0 && <h1>User has not posts.</h1>}
+      {!fetchingPosts && posts.length === 0 && <h1>User has no posts.</h1>}
       {fetchingPosts && (
         <Flex justifyContent={"center"} my={12}>
           <Spinner size={"xl"} />

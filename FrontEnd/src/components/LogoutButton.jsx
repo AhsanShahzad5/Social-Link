@@ -4,12 +4,13 @@ import userAtom from '../../atoms/userAtom'
 import { Button } from '@chakra-ui/button'
 import { FiLogOut } from "react-icons/fi";
 import useShowToast from '../../hooks/useShowToast'
+import { useNavigate } from 'react-router-dom';
 
 const LogoutButton = ({size}) => {
   const setUser = useSetRecoilState(userAtom);
   //calling showToast function from our hook
   const showToast = useShowToast()
-
+  const navigate = useNavigate();
   const handleLogout = async () => {
     try {
 
@@ -23,14 +24,15 @@ const LogoutButton = ({size}) => {
 
       });
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
 
       if (data.error) {
         showToast("Error", data.error, 'error')
         return;
       }
       localStorage.removeItem('user-threads');
-      setUser(null)
+      setUser(null);
+      navigate('/auth')
     } catch (error) {
       showToast("Error", error, 'error')
     }

@@ -17,6 +17,7 @@ import { useRecoilState } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import useShowToast from '../../hooks/useShowToast'
 import usePreviewImage from '../../hooks/usePreviewImage';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function UpdateProfile() {
   const [user, setUser] = useRecoilState(userAtom);
@@ -30,8 +31,7 @@ export default function UpdateProfile() {
     bio: user.bio,
   })
 
-  console.log(user , "is here");
-
+  const navigate = useNavigate();
   const showToast = useShowToast()
 
   const { name, username, email, password, bio } = inputs;
@@ -58,7 +58,7 @@ export default function UpdateProfile() {
       });
 
       const data = await res.json(); //updated user obj
-      console.log(data);
+      // console.log(data);
 
       if (data.error) {
         showToast("Error", data.error, 'error')
@@ -68,6 +68,8 @@ export default function UpdateProfile() {
         , 'success');
         setUser(data);
         localStorage.setItem("user-threads", JSON.stringify(data));
+        
+        
 
     } catch (error) {
       showToast("Error", error, "error");
@@ -75,6 +77,7 @@ export default function UpdateProfile() {
 
     }finally{
       setUpdating(false);
+      navigate(`/${username}`);
     }
   }
 

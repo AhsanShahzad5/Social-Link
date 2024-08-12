@@ -10,14 +10,14 @@ import { Portal } from "@chakra-ui/portal";
 import { CgMoreO } from "react-icons/cg";
 import { BsInstagram } from "react-icons/bs";
 
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import useFollowUnfollow from '../../hooks/useFollowUnfollow';
 
 const UserHeader = ({ user }) => {
 
-const {handleFollowUnfollow , following , updating} = useFollowUnfollow(user);
+    const { handleFollowUnfollow, following, updating } = useFollowUnfollow(user);
     // current user logged in while the user in props is the one whos id we are watching
     const currentUser = useRecoilValue(userAtom);
 
@@ -50,7 +50,7 @@ const {handleFollowUnfollow , following , updating} = useFollowUnfollow(user);
                         <Flex gap={2} alignItems={"center"}>
                             <Text fontSize={"sm"}>{user.username}</Text>
                             <Text fontSize={"xs"} bg={"gray.dark"} color={"gray.light"} p={1} borderRadius={"full"}>
-                                Threads.net
+                                Social Link
                             </Text>
                         </Flex>
                     </Box>
@@ -72,10 +72,18 @@ const {handleFollowUnfollow , following , updating} = useFollowUnfollow(user);
                 </Flex>
                 <Text>{user.bio} </Text>
                 {currentUser?._id === user._id && (
+                    <>
+                        <Flex gap={3}>
 
-                    <Link as={RouterLink} to='/update'>
-                        <Button size={"sm"}>Update Profile</Button>
-                    </Link>
+                            <Link as={RouterLink} to='/update'>
+                                <Button size={"sm"}>Update Profile</Button>
+                            </Link>
+
+                            <Link as={RouterLink} to='/settings'>
+                                <Button size={"sm"}>Freeze Account</Button>
+                            </Link>
+                        </Flex>
+                    </>
                 )}
                 {currentUser?._id !== user._id && (
                     <Button size={"sm"}
@@ -88,13 +96,15 @@ const {handleFollowUnfollow , following , updating} = useFollowUnfollow(user);
                 <Flex w={"full"} justifyContent={"space-between"}>
                     <Flex gap={2} alignItems={"center"}>
                         <Text color={"gray.light"}>{user.followers.length} followers</Text>
-                        <Box w='1' h='1' bg={"gray.light"} borderRadius={"full"}></Box>
-                        <Link color={"gray.light"}>instagram.com</Link>
+                        {/* <Box w='1' h='1' bg={"gray.light"} borderRadius={"full"}></Box> */}
+                        {/* <Link color={"gray.light"}>instagram.com</Link> */}
                     </Flex>
                     <Flex>
-                        <Box className='icon-container'>
-                            <BsInstagram size={24} cursor={"pointer"} />
-                        </Box>
+                        <Link href="https://www.instagram.com" isExternal>
+                            <Box className='icon-container'>
+                                <BsInstagram size={24} cursor={"pointer"} />
+                            </Box>
+                        </Link>
                         <Box className='icon-container'>
                             <Menu>
 
@@ -115,9 +125,9 @@ const {handleFollowUnfollow , following , updating} = useFollowUnfollow(user);
 
                 <Flex w={"full"}>
                     <Flex flex={1} borderBottom={"1.5px solid white"} justifyContent={"center"} pb='3' cursor={"pointer"}>
-                        <Text fontWeight={"bold"}> Threads</Text>
+                        <Text fontWeight={"bold"}> Posts</Text>
                     </Flex>
-                    <Flex
+                    {/* <Flex
                         flex={1}
                         borderBottom={"1px solid gray"}
                         justifyContent={"center"}
@@ -126,7 +136,7 @@ const {handleFollowUnfollow , following , updating} = useFollowUnfollow(user);
                         cursor={"pointer"}
                     >
                         <Text fontWeight={"bold"}> Replies</Text>
-                    </Flex>
+                    </Flex> */}
                 </Flex>
 
             </VStack>

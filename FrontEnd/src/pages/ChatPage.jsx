@@ -67,6 +67,7 @@ const ChatPage = () => {
 
 
   const handleConversationSearch = async (e) => {
+    e.preventDefault();
     try {
       setSearchingUser(true);
       //we wanna get username of user , from there we can fetch the user msg

@@ -1,7 +1,7 @@
 import { Avatar, Divider, Flex, Image, Skeleton, SkeletonCircle, Text, useColorModeValue } from "@chakra-ui/react";
 import React from 'react'
 import { useEffect, useRef, useState } from "react";
-
+import messageAlert from '../assets/sounds/messageAlert.mp3'
 import MessageInput from './MessageInput';
 import Message from './Message';
 import useShowToast from '../../hooks/useShowToast';
@@ -27,7 +27,9 @@ const MessageContainer = () => {
 			if (selectedConversation._id === message.conversationId) {
 				setMessages((prev) => [...prev, message]);
 			}
-
+			
+			const sound = new Audio(messageAlert);
+			sound.play();
 			//updating the latest msg that appears on left
 			setConversations((prev) => {
 				const updatedConversations = prev.map((conversation) => {

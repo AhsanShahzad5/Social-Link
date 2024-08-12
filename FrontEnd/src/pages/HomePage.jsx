@@ -8,6 +8,7 @@ import CreatePost from "../components/CreatePost";
 
 import postsAtom from "../../atoms/postsAtom";
 import userAtom from "../../atoms/userAtom";
+import SuggestedUsers from "../components/SuggestedUsers";
 
 const HomePage = () => {
   const [posts, setPosts] = useRecoilState(postsAtom);
@@ -42,8 +43,8 @@ const HomePage = () => {
   return (
     <>
       {user && <CreatePost />}
-      {/* <Flex gap='10'  alignItems={"flex-start"} > */}
-        {/* <Box flex={90} > */}
+      <Flex gap='10' alignItems={"flex-start"} >
+        <Box flex={90} >
           {!loading && posts.length === 0 && <h1>Follow some users to see the feed</h1>}
 
           {loading && (
@@ -55,16 +56,11 @@ const HomePage = () => {
           {posts.map((post) => (
             <Post key={post._id} post={post} postedBy={post.postedBy} />
           ))}
-        {/* </Box> */}
-        <Box
-          flex={30}
-          display={{
-            base: "none",
-            md: "block",
-          }}
-        >
         </Box>
-      {/* </Flex> */}
+        <Box flex={30} display={{ base: "none", md: "block", }} >
+          <SuggestedUsers/>
+        </Box>
+      </Flex>
       {/* {user && <LogoutButton />} */}
 
     </>);

@@ -7,17 +7,16 @@ import {v2 as cloudinary} from 'cloudinary'
 import userRoutes from './routes/userRoutes.js'
 import postRoutes from './routes/postRoutes.js'
 import messageRoutes from './routes/messageRoutes.js'
-
 // import app and server from socket
 import {app,server} from './socket/socket.js'
 //env 
 import dotenv from 'dotenv';
-
-
 //mongodb connection
 import connectToMongo from './databaseConnection.js' 
-connectToMongo()
+import job from './cron/cron.js';
 
+connectToMongo()
+job.start();
 
 dotenv.config()
 //port
@@ -40,21 +39,15 @@ app.use(express.json({limit : "50mb"}))     //to pass json in request.body
 app.use(urlencoded({extended : true}))   // req.body can parse nested data from forms
 app.use(cookieParser());
 
-//routes
-// app.get('/' , (req , res)=>{
-//     res.send("hello to my page")
-// })
-
 
 //routing
 app.use('/api/users' , userRoutes);
 app.use('/api/posts' , postRoutes );
 app.use('/api/messages' , messageRoutes );
 
-//8000 -> be
-//3000->fe
-
-// we need both frontend and backend on 8000
+//8000 -> backend
+//3000->frontend
+// but we need both frontend and backend on 8000
 
 //this is to render frontend to static assets
 if (process.env.NODE_ENV === "production") {
